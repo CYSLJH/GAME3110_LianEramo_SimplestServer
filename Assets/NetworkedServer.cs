@@ -22,6 +22,8 @@ public class NetworkedServer : MonoBehaviour
 
     LinkedList<GameSession> gameSessions;
 
+    int[] ticTacToeBoard = new int[9];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,6 +48,11 @@ public class NetworkedServer : MonoBehaviour
         //We need to load our saved player accounts.
         LoadPlayerAccounts();
 
+
+        for(int i = 0; i < ticTacToeBoard.Length; i++)
+        {
+            ticTacToeBoard[i] = 0;
+        }
     }
 
     // Update is called once per frame
@@ -182,16 +189,34 @@ public class NetworkedServer : MonoBehaviour
 
             GameSession gs = FindGameSessionWithPLayerID(id);
 
-            if(gs.playerID1 == id)
+            int buttonPressed = int.Parse(csv[1]);
+
+            if (gs.playerID1 == id)
             {
-                SendMessageToClient(ServerToClientSignifiers.OpponentTicTacToePlay + "", gs.playerID2);
+                ticTacToeBoard[buttonPressed] = 1;
+                SendMessageToClient(ServerToClientSignifiers.OpponentTicTacToePlay + "" + buttonPressed.ToString(), gs.playerID2);
+                Debug.Log(buttonPressed);
             }
             else
             {
-                SendMessageToClient(ServerToClientSignifiers.OpponentTicTacToePlay + "", gs.playerID1);
+                ticTacToeBoard[buttonPressed] = 2;
+                SendMessageToClient(ServerToClientSignifiers.OpponentTicTacToePlay + "" + buttonPressed.ToString(), gs.playerID1);
+                Debug.Log(buttonPressed);
             }
-        }
 
+            ///Debug.Log("playing");
+            ///
+            ///GameSession gs = FindGameSessionWithPLayerID(id);
+            ///
+            ///if(gs.playerID1 == id)
+            ///{
+            ///    SendMessageToClient(ServerToClientSignifiers.OpponentTicTacToePlay + "", gs.playerID2);
+            ///}
+            ///else
+            ///{
+            ///    SendMessageToClient(ServerToClientSignifiers.OpponentTicTacToePlay + "", gs.playerID1);
+            ///}
+        }
     }
 
     private void SavePlayerAccounts()
